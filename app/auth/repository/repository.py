@@ -34,3 +34,17 @@ class AuthRepository:
             }
         )
         return user
+
+    def edit_user_by_id(self, user_id: str, userData: dict) -> dict | None:
+        user = self.database["users"].update_one(
+            {"_id": ObjectId(user_id)},
+            {
+                "$set": {
+                    "phone": userData["phone"],
+                    "name": userData["name"],
+                    "city": userData["city"],
+                }
+            },
+        )
+
+        return user

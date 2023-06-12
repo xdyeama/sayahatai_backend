@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from app.auth.router import router as auth_router
+from app.shanyraks.router import router as shanyraks_router
+
 from app.config import client, env, fastapi_config
 
 app = FastAPI(**fastapi_config)
@@ -20,4 +22,5 @@ app.add_middleware(
     allow_credentials=True,
 )
 
+app.include_router(shanyraks_router, prefix="/shanyraks", tags=["Shanyraks"])
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
