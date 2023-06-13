@@ -18,7 +18,7 @@ class ShanyraksRepository:
             "description": shanyrak_data["description"],
         }
         response = self.database["shanyraks"].insert_one(payload)
-        return response
+        return response.inserted_id
     
     def get_shanyrak_by_id(self, id: str):
         response = self.database["shanyraks"].find_one({'_id': ObjectId(id)})

@@ -21,7 +21,7 @@ class CreateShanyrakRequest(AppModel):
 
 
 class CreateShanyrakResponse(AppModel):
-    id: str
+    id: Any = Field(alias="_id")
 
 
 @router.post(
@@ -33,12 +33,11 @@ def create_shanyrak(
     input: CreateShanyrakRequest,
     jwt_data: JWTData = Depends(parse_jwt_user_data),
     svc: Service = Depends(get_service),
-) -> dict[str, str]:
+):
     response = svc.repository.create_shanyrak(
         user_id=jwt_data.user_id,
         shanyrak_data=input.dict(),
     )
 
-    return response.inserted_id
-
+    return CreateShanyrakResponse(id=response)
 
