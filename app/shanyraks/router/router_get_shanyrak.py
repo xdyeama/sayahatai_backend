@@ -24,5 +24,3 @@ class GetShanyrakResponse(AppModel):
 def get_shanyrak(id: str, svc: Service = Depends(get_service)) -> dict[str, Any]:
     response = svc.repository.get_shanyrak_by_id(id=id)
     return response
-
-
