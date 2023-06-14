@@ -5,6 +5,10 @@ services:
     build:
       context: .
       dockerfile: ./deploy/dockerfiles/Dockerfile
+    environment: 
+      - MONGOHOST=mongodb
+      - AWS_ACCESS_KEY_ID=AKIAVL2UUMTHKTWI7HFM
+      - AWS_SECRET_ACCESS_KEY=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
     env_file:
       - .env
     volumes:
@@ -17,8 +21,6 @@ services:
   mongodb:
     image: mongo:4.4.6-bionic
     environment:
-      AWS_ACCESS_KEY_ID: AKIAVL2UUMTHKTWI7HFM
-      AWS_SECRET_ACCESS_KEY: 64871420beafb96c10af2580
       MONGO_INITDB_ROOT_USERNAME: ${MONGOUSER:-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGOPASSWORD:-password}
     ports:

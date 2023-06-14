@@ -1,5 +1,6 @@
 from typing import BinaryIO
 
+
 import boto3
 
 
@@ -9,7 +10,7 @@ class S3Service:
 
     def upload_file(self, file: BinaryIO, filename: str):
         bucket = "dattebayokz-bucket"
-        filekey = f"/images/{filename}"
+        filekey = f"images/{filename}"
 
         self.s3.upload_fileobj(file, bucket, filekey)
 
@@ -19,3 +20,9 @@ class S3Service:
         )
 
         return object_url
+
+    def delete_file(self, filename: str):
+        bucket = "dattebayokz-bucket"
+        filekey = f"/images/{filename}"
+
+        self.s3.delete_object(Bucket=bucket, key=filekey)

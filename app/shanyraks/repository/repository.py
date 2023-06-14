@@ -158,7 +158,7 @@ class ShanyraksRepository:
         else:
             raise HTTPException(status_code=404, detail="Shanyrak does not exist")
 
-    def upload_images(self, id: str, user_id: str, image_filename: str):
+    def upload_images(self, id: str, user_id: str, image_url: str):
         check_shanyrak_exist = self.database["shanyraks"].find_one(
             {"$and": [{"_id": ObjectId(id)}, {"user_id": ObjectId(user_id)}]}
         )
@@ -166,10 +166,26 @@ class ShanyraksRepository:
         if check_shanyrak_exist:
             self.database["shanyraks"].update_one(
                 {"$and": [{"_id": ObjectId(id)}, {"user_id": ObjectId(user_id)}]},
-                {"$push": {"media": image_filename}},
+                {"$push": {"media": image_url}},
             )
         else:
             raise HTTPException(
                 status_code=404,
                 detail="Shanyrak does not exist, or you cannot upload images to others posts",
+            )
+
+    def delete_images(self, id: str, user_id: str, image_url: str):
+        check_shanyrak_exist = self.database["shanyraks"].find_one(
+            {"$and": [{"_id": ObjectId(id)}, {"user_id": ObjectId(user_id)}]}
+        )
+
+        if check_shanyrak_exist:
+            self.database["shanyraks"].update_one(
+                {"$and": [{"_id": ObjectId(id)}, {"user_id": ObjectId(user_id)}]},
+                {"$pull": {"media": image_url}},
+            )
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail="Shanyrak does not exist, or you cannot delete images to others posts",
             )

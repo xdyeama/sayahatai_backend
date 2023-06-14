@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from fastapi import Depends
 from pydantic import Field
@@ -18,6 +18,7 @@ class GetShanyrakResponse(AppModel):
     rooms_count: int
     description: str
     user_id: Any = Field(alias="user_id")
+    media: List[str]
 
 
 @router.get("/{id}", status_code=200, response_model=GetShanyrakResponse)
