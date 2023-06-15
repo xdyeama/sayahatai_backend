@@ -15,6 +15,8 @@ class Config(BaseSettings):
     MONGOPASSWORD: str = "password"
     MONGODATABASE: str = "fastapi"
 
+    HERE_API_KEY: str
+
 
 # environmental variables
 env = Config()

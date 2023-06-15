@@ -10,7 +10,7 @@ class ShanyraksRepository:
     def __init__(self, database: Database):
         self.database = database
 
-    def create_shanyrak(self, user_id: str, shanyrak_data: dict):
+    def create_shanyrak(self, user_id: str, shanyrak_data: dict, location: dict):
         payload = {
             "user_id": ObjectId(user_id),
             "type": shanyrak_data["type"],
@@ -19,6 +19,7 @@ class ShanyraksRepository:
             "area": shanyrak_data["area"],
             "rooms_count": shanyrak_data["rooms_count"],
             "description": shanyrak_data["description"],
+            "location": location,
         }
         response = self.database["shanyraks"].insert_one(payload)
         return response.inserted_id

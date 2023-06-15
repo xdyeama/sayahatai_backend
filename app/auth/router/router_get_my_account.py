@@ -17,6 +17,7 @@ class GetMyAccountResponse(AppModel):
     phone: str = ""
     name: str = ""
     city: str = ""
+    avatar_url: str = ""
 
 
 @router.get("/users/me", response_model=GetMyAccountResponse)
@@ -25,4 +26,12 @@ def get_my_account(
     svc: Service = Depends(get_service),
 ) -> dict[str, str]:
     user = svc.repository.get_user_by_id(jwt_data.user_id)
-    return user
+    response = {
+        "_id": user["_id"],
+        "email": user["email"],
+        "phone": user["phone"],
+        "name": user["name"],
+        "city": user["city"],
+        "avatar_url": user["avatar_url"],
+    }
+    return response

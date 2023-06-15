@@ -1,4 +1,4 @@
-from fastapi import Depends, Response, UploadFile
+from fastapi import Depends, Response
 from typing import List
 from app.utils import AppModel
 
@@ -26,6 +26,6 @@ def delete_images(
         image_list = image.split("/")
         image_filename = image_list[-1]
         print(image_filename)
-        # svc.s3_service.delete_file(id=id, filename=image_filename)
+        svc.s3_service.delete_file(id=id, filename=image_filename)
         svc.repository.delete_images(id=id, user_id=jwt_data.user_id, image_url=image)
     return Response(status_code=200)
