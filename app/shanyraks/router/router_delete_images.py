@@ -8,8 +8,6 @@ from ..service import Service, get_service
 from . import router
 from .dependencies import parse_jwt_user_data
 
-import re
-
 
 class DeleteImagesResponse(AppModel):
     media: List[str]
@@ -22,10 +20,12 @@ def delete_images(
     jwt_data: JWTData = Depends(parse_jwt_user_data),
     svc: Service = Depends(get_service),
 ):
-    pattern = re.compile("/*.png")
-    for image in input:
-        svc.s3_service.delete_file(image)
-        svc.repository.delete_images(
-            id=id, user_id=jwt_data.user_id, media=input.dict()
-        )
+    images_dict = input.dict()
+    image_urls = images_dict["media"]
+    for image in image_urls:
+        image_list = image.split("/")
+        image_filename = image_list[-1]
+        print(image_filename)
+        # svc.s3_service.delete_file(id=id, filename=image_filename)
+        svc.repository.delete_images(id=id, user_id=jwt_data.user_id, image_url=image)
     return Response(status_code=200)

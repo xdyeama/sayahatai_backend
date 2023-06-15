@@ -15,8 +15,8 @@ def upload_images(
     svc: Service = Depends(get_service),
 ):
     for image in input:
-        url = svc.s3_service.upload_file(image.file, image.filename)
-        svc.repository.upload_images(
-            id=id, user_id=jwt_data.user_id, image_url=url
+        url = svc.s3_service.upload_file(
+            id=id, file=image.file, filename=image.filename
         )
+        svc.repository.upload_images(id=id, user_id=jwt_data.user_id, image_url=url)
     return Response(status_code=200)
