@@ -82,8 +82,11 @@ class ShanyraksRepository:
 
         if check_exist:
             response = self.database["shanyraks"].find_one({"_id": ObjectId(id)})
-            comments = response["comments"]
-            return comments
+            if response:
+                comments = response["comments"]
+                return comments
+            else:
+                return []
         else:
             raise HTTPException(status_code=404, detail="Shanyrak does not exist")
 
