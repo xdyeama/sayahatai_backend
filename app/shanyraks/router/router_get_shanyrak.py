@@ -18,8 +18,8 @@ class GetShanyrakResponse(AppModel):
     rooms_count: int
     description: str
     user_id: Any = Field(alias="user_id")
-    media: List[str]
-    location: Dict
+    media: List[str] = []
+    location: Dict = {}
 
 
 @router.get("/{id}", status_code=200, response_model=GetShanyrakResponse)

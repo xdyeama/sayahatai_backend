@@ -1,5 +1,4 @@
 import requests
-from fastapi import HTTPException
 
 
 class HereService:
@@ -12,7 +11,10 @@ class HereService:
         response = requests.get(url)
         json = response.json()
 
-        if "items" in json and len(json["items"]) > 0:
-            return json["items"][0]["location"]
+        if "items" in json.keys() and json["items"] > 0:
+            return {
+                "latitude": json["items"][0]["location"]["lat"],
+                "longitude": json["items"][0]["location"]["lng"],
+            }
         else:
-            raise HTTPException(status_code=404, detail="No address found")
+            return {"latitude": 0, "longitude": 0}
