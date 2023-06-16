@@ -193,3 +193,50 @@ class ShanyraksRepository:
                 status_code=404,
                 detail="Shanyrak does not exist, or you cannot delete images to others posts",
             )
+
+    def get_filtered_shanyraks(
+        self,
+        limit: int,
+        offset: int,
+        type: str | None,
+        rooms_count: int | None,
+        price_from: int | None,
+        price_until: int | None,
+    ):
+        response_count = 0
+        if limit == 0 and offset == 0:
+            response = self.database["shanyraks"].find({})
+            response_count = self.database["shanyraks"].count_documents({})
+        else:
+            query_filter = {}
+            if type is not None:
+                query_filter["type"] = type
+            if rooms_count is not None:
+                query_filter["rooms_count"] = rooms_count
+            price_filter = {}
+            if price_from is not None:
+                price_filter["$gte"] = price_from
+            if price_until is not None:
+                price_filter["$lte"] = price_until
+            if price_filter != {}:
+                query_filter["price"] = price_filter
+            response = (
+                self.database["shanyraks"].find(query_filter).limit(limit).skip(offset)
+            )
+
+            response_count = self.database["shanyraks"].count_documents(query_filter)
+
+        response_list = []
+        for shanyrak in response:
+            response_list.append(
+                {
+                    "_id": str(shanyrak["_id"]),
+                    "type": shanyrak["type"],
+                    "rooms_count": shanyrak["rooms_count"],
+                    "address": shanyrak["address"],
+                    "price": shanyrak["price"],
+                    "area": shanyrak["area"],
+                    "location": shanyrak["location"],
+                }
+            )
+        return {"total": response_count, "items": response_list}
