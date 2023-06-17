@@ -36,6 +36,9 @@ def get_filtered_shanyraks(
     rooms_count: int | None = None,
     price_from: int | None = None,
     price_until: int | None = None,
+    latitude: float | None = None,
+    longitude: float | None = None,
+    radius: float | None = None,
     svc: Service = Depends(get_service),
 ) -> dict[str, Any]:
     response = svc.repository.get_filtered_shanyraks(
@@ -45,5 +48,8 @@ def get_filtered_shanyraks(
         rooms_count=rooms_count,
         price_from=price_from,
         price_until=price_until,
+        latitude=latitude,
+        longitude=longitude,
+        radius=radius,
     )
     return response

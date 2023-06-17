@@ -10,19 +10,22 @@ class ShanyraksRepository:
     def __init__(self, database: Database):
         self.database = database
 
-    def create_shanyrak(self, user_id: str, shanyrak_data: dict, location: dict):
+    def create_shanyrak(self, user_id: str, shanyrak: dict, coordinates: dict):
         payload = {
+            "type": shanyrak["type"],
+            "price": shanyrak["price"],
+            "address": shanyrak["address"],
+            "area": shanyrak["area"],
+            "rooms_count": shanyrak["rooms_count"],
+            "description": shanyrak["description"],
+            "location": {
+                "latitude": coordinates["lat"],
+                "longitude": coordinates["lng"],
+            },
             "user_id": ObjectId(user_id),
-            "type": shanyrak_data["type"],
-            "price": shanyrak_data["price"],
-            "address": shanyrak_data["address"],
-            "area": shanyrak_data["area"],
-            "rooms_count": shanyrak_data["rooms_count"],
-            "description": shanyrak_data["description"],
-            "location": location,
         }
-        response = self.database["shanyraks"].insert_one(payload)
-        return response.inserted_id
+        new_shanyrak = self.database["shanyraks"].insert_one(payload)
+        return new_shanyrak.inserted_id
 
     def get_shanyrak_by_id(self, id: str):
         response = self.database["shanyraks"].find_one({"_id": ObjectId(id)})
@@ -202,13 +205,20 @@ class ShanyraksRepository:
         rooms_count: int | None,
         price_from: int | None,
         price_until: int | None,
+        latitude: float | None,
+        longitude: float | None,
+        radius: float | None,
     ):
-        response_count = 0
-        if limit == 0 and offset == 0:
-            response = self.database["shanyraks"].find({})
-            response_count = self.database["shanyraks"].count_documents({})
-        else:
-            query_filter = {}
+        def get_query_filter(
+            query_filter: dict,
+            type: str | None,
+            rooms_count: int | None,
+            price_from: int | None,
+            price_until: int | None,
+            latitude: float | None,
+            longitude: float | None,
+            radius: float | None,
+        ):
             if type is not None:
                 query_filter["type"] = type
             if rooms_count is not None:
@@ -219,7 +229,34 @@ class ShanyraksRepository:
             if price_until is not None:
                 price_filter["$lte"] = price_until
             if price_filter != {}:
-                query_filter["price"] = price_filter
+                query_filter["price"] = (price_filter,)
+            if latitude is not None and longitude is not None and radius is not None:
+                radius_converted_approximately = radius * 3.2535313808
+                query_filter["location"] = {
+                    "$geoWithin": {
+                        "$centerSphere": [
+                            [longitude, latitude],
+                            radius_converted_approximately,
+                        ]
+                    }
+                }
+            return query_filter
+
+        response_count = 0
+        query_filter = get_query_filter(
+            {},
+            type,
+            rooms_count,
+            price_from,
+            price_until,
+            latitude,
+            longitude,
+            radius,
+        )
+        if limit == 0 and offset == 0:
+            response = self.database["shanyraks"].find(query_filter)
+            response_count = self.database["shanyraks"].count_documents({})
+        else:
             response = (
                 self.database["shanyraks"].find(query_filter).limit(limit).skip(offset)
             )
