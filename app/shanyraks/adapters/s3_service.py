@@ -20,7 +20,7 @@ class S3Service:
         )
 
         return object_url
-    
+
     def upload_user_avatar(self, user_id: str, file: BinaryIO, filename: str):
         bucket = "dattebayokz-bucket"
         filekey = f"users/{user_id}/{filename}"

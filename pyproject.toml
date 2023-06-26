@@ -18,6 +18,12 @@ orjson = "^3.9.1"
 boto3 = "^1.26.153"
 requests = "^2.31.0"
 python-dotenv = "^1.0.0"
+langchain = "^0.0.212"
+openai = "^0.27.8"
+bson = "^0.5.10"
+chromadb = "^0.3.26"
+bs4 = "^0.0.1"
+googlemaps = "^4.10.0"
 
 
 [tool.poetry.group.dev.dependencies]
