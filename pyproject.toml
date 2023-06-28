@@ -24,6 +24,7 @@ bson = "^0.5.10"
 chromadb = "^0.3.26"
 bs4 = "^0.0.1"
 googlemaps = "^4.10.0"
+kor = "^0.10.0"
 
 
 [tool.poetry.group.dev.dependencies]

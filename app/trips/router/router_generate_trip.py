@@ -1,9 +1,13 @@
 from fastapi import Depends, status
 
 from app.utils import AppModel
+from app.auth.adapters.jwt_service import JWTData
+from app.auth.router.dependencies import parse_jwt_user_data
 
 from ..service import Service, get_service
 from . import router
+
+import json
 
 
 class GenerateTripRequest(AppModel):
@@ -13,14 +17,17 @@ class GenerateTripRequest(AppModel):
 
 
 class GenerateTripResponse(AppModel):
-    trip: str
+    trip_id: str
 
 
 @router.post(
-    "/users", status_code=status.HTTP_201_CREATED, response_model=GenerateTripResponse
+    "/users",
+    status_code=status.HTTP_201_CREATED,
+    response_model=GenerateTripResponse,
 )
-def generateTrip(
+def generate_trip(
     input: GenerateTripRequest,
+    jwt_data: JWTData = Depends(parse_jwt_user_data),
     svc: Service = Depends(get_service),
 ) -> dict[str, str]:
     cities = input.dict()["cities"]
@@ -30,6 +37,9 @@ def generateTrip(
     response = svc.openai_service.generate_initial_plan(
         cities=cities, num_days=num_days, travel_style=travel_style
     )
-    print(response)
+    resp_json = json.loads(response[: len(response) // 2])
+    trip_id = svc.repository.create_trip(
+        user_id=jwt_data.user_id, input=resp_json["trip"]
+    )
 
-    return {"trip": response}
+    return GenerateTripResponse(trip_id=str(trip_id))
