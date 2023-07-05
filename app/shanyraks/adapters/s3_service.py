@@ -9,8 +9,8 @@ class S3Service:
         self.s3 = boto3.client("s3")
 
     def upload_file(self, id: str, file: BinaryIO, filename: str):
-        bucket = "dattebayokz-bucket"
-        filekey = f"shanyraks/{id}/{filename}"
+        bucket = "sayahatai"
+        filekey = f"users/{id}/{filename}"
 
         self.s3.upload_fileobj(file, bucket, filekey)
 

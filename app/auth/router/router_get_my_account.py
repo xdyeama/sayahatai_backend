@@ -29,9 +29,7 @@ def get_my_account(
     response = {
         "_id": user["_id"],
         "email": user["email"],
-        "phone": user["phone"],
         "name": user["name"],
-        "city": user["city"],
         "avatar_url": user["avatar_url"],
     }
     return response

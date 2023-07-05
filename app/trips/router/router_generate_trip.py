@@ -1,3 +1,4 @@
+import logging
 from fastapi import Depends, status
 
 from app.utils import AppModel
@@ -8,6 +9,8 @@ from ..service import Service, get_service
 from . import router
 
 import json
+
+logger = logging.getLogger(__name__)
 
 
 class GenerateTripRequest(AppModel):
@@ -21,7 +24,7 @@ class GenerateTripResponse(AppModel):
 
 
 @router.post(
-    "/users",
+    "/generate",
     status_code=status.HTTP_201_CREATED,
     response_model=GenerateTripResponse,
 )
@@ -37,6 +40,9 @@ def generate_trip(
     response = svc.openai_service.generate_initial_plan(
         cities=cities, num_days=num_days, travel_style=travel_style
     )
+    # logger.info("Generated initial plan")
+    # logger.info(response)
+    # logger.info("Ended initial plan")
     resp_json = json.loads(response[: len(response) // 2])
     trip_id = svc.repository.create_trip(
         user_id=jwt_data.user_id, input=resp_json["trip"]
